@@ -74,6 +74,7 @@ module.exports = {
 webpack-dev-server --progress --colors
 ```
 运行起来后直接修改css或者js，浏览器不用刷新也能看到改动后的结果。
+			
 退出 
 ---
 ```
