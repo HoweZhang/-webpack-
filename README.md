@@ -1,6 +1,6 @@
 #学习webpack的记录
 ==========
-第一步 安装  
+第一步 安装  （基于node和cnpm）
 ---
     
 ```
@@ -14,6 +14,9 @@ npm init    //(初始化，生成package.json文件)
           
 ```
 cnpm install webpack --save   //（--save是将webpack安装在当前文件夹）
+```
+```
+cnpm install css-loader style-loader   //（安装一些需要的loader）
 ```
     
 ```
@@ -44,5 +47,36 @@ module.exports = "It works from demo2.js.";
 </body>
 </html>
 ```
-
+创建style.css
+```
+body {
+    background: yellow;
+}
+```
+创建webpack.config.js
+```
+module.exports = {
+	entry:"./demo1.js",
+	output:{
+		path:__dirname,
+		filename:"bundle.js"
+	},
+	module:{
+		loaders:[
+			{test:/\.css$/,loader:"style-loader!css-loader"}
+		]
+	}
+}
+```
+第三步 运行  
+---
+```
+webpack-dev-server --progress --colors
+```
+运行起来后直接修改css或者js，浏览器不用刷新也能看到改动后的结果。
+退出 
+---
+```
+Ctrl+c
+```
 
