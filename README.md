@@ -20,7 +20,7 @@ cnpm install css-loader style-loader   //（安装一些需要的loader）
 ```
     
 ```
-cnpm install webpack-dev-server --g   //（全局安装静态资源服务器）
+cnpm install webpack-dev-server --g   //（全局安装静态资源服务器,安装前请先全局安装webpack）
 ```    
    
 第二步 配置  
@@ -73,7 +73,7 @@ module.exports = {
 ```
 webpack-dev-server --progress --colors
 ```
-运行起来后直接修改css或者js，浏览器不用刷新也能看到改动后的结果。
+运行起来后浏览器打开localhost:8080,直接修改css或者js，浏览器不用刷新也能看到改动后的结果。
 			
 退出 
 ---
