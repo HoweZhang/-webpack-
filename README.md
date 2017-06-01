@@ -73,7 +73,7 @@ module.exports = {
 ```
 webpack-dev-server --progress --colors
 ```
-运行起来后浏览器打开localhost:8080,直接修改css或者js，浏览器不用刷新也能看到改动后的结果。
+运行起来后浏览器打开[localhost:8080](http://localhost:8080),直接修改css或者js，浏览器不用刷新也能看到改动后的结果。
 			
 退出 
 ---
