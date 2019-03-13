@@ -1,5 +1,5 @@
 vue-cli3选按需配置，然后配置vue.config.js（官方文档）
-···
+~~~
 module.exports = {//具体配置可参考官网
 
 	publicPath:'./',//打包后可以被部署到任意路径
@@ -58,4 +58,4 @@ module.exports = {//具体配置可参考官网
         // ...
       }
     };
-···
+~~~
