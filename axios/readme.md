@@ -109,3 +109,5 @@ fetchData: async function(){
       
     }
 ~~~
+
+vue-cli3的async和await所需要的babel已经自带，可直接使用
