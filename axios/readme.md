@@ -1,113 +1,109 @@
 axios封装（未完待续）
 -------
 ~~~
-'use strict'
-
 import axios from 'axios'
-import qs from 'qs'
+// import { MessageBox, Message } from 'element-ui'
 
-axios.interceptors.request.use(config => {
-  // loading
-  return config
-}, error => {
-  return Promise.reject(error)
+// create an axios instance
+const service = axios.create({
+  baseURL: '/api', // 线上环境
+  withCredentials: true, // 跨域请求时发送 cookies
+  timeout: 5000 // request timeout
 })
 
-axios.interceptors.response.use(response => {
-	console.log("返回的拦截器："+response);
-  return response
-}, error => {
-  return Promise.resolve(error.response)
-})
-
-function checkStatus (response) {
-  // loading
-  // 如果http状态码正常，则直接返回数据
-  // if (response && (response.data.status === 200 || response.data.status === 304 || response.data.status === 400)) {
-  if (response && (response.data.status === 1)) {
-    return response
-    // 如果不需要除了data之外的数据，可以直接 return response.data
-  }
-  // 异常状态下，把错误信息返回去
-  return {
-    status: -404,
-    msg: response.data.msg
-  }
-}
-
-function checkCode (res) {
-  // 如果code异常(这里已经包括网络错误，服务器错误，后端抛出的错误)，可以弹出一个错误提示，告诉用户
-  if (res.status === -404) {
-    console.log("错误信息："+res.msg)
-  }
-  if (res.data && (!res.data.success)) {
-    console.log("错误信息2："+res.data.error_msg)
-  }
-  return res
-}
-
-export default {
-  post (url, data) {
-    return axios({
-      method: 'post',
-      baseURL: '/api',
-      url,
-      data: qs.stringify(data),
-      timeout: 10000,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest',
-        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-      }
-    }).then(
-      (response) => {
-      	console.log(response);
-        return checkStatus(response)
-      }
-    ).catch(
-      (res) => {
-        return checkCode(res)
-      }
-    )
+// request interceptor
+service.interceptors.request.use(
+  config => {
+    console.log("请求前经过拦截器")
+    console.log(config);
+    // Do something before request is sent
+    // if (store.getters.token) {
+      // console.log("进入了判断");
+      // 让每个请求携带token-- ['X-Token']为自定义key 请根据实际情况自行修改
+      // config.headers['X-Token'] = getToken()
+    // }
+    return config
   },
-  get (url, params) {
-    return axios({
-      method: 'get',
-      baseURL: '/api',
-      url,
-      params, // get 请求时带的参数
-      timeout: 10000,
-      headers: {
-        'X-Requested-With': 'XMLHttpRequest'
-      }
-    }).then(
-      (response) => {
-        return checkStatus(response)
-      }
-    ).then(
-      (res) => {
-        return checkCode(res)
-      }
-    )
+  error => {
+    // Do something with request error
+    console.log("难道我被这里拦截了吗")
+    console.log(error) // for debug
+    Promise.reject(error)
   }
-}
+)
+
+// response interceptor
+service.interceptors.response.use(
+  /**
+   * If you want to get information such as headers or status
+   * Please return  response => response
+  */
+  /**
+   * 下面的注释为通过在response里，自定义code来标示请求状态
+   * 当code返回如下情况则说明权限有问题，登出并返回到登录页
+   * 如想通过 XMLHttpRequest 来状态码标识 逻辑可写在下面error中
+   * 以下代码均为样例，请结合自生需求加以修改，若不需要，则可删除
+   */
+  response => {
+  	return response
+    // const res = response.data
+    // if (res.code !== 20000) {
+    //   Message({
+    //     message: res.message,
+    //     type: 'error',
+    //     duration: 5 * 1000
+    //   })
+    //   // 50008:非法的token; 50012:其他客户端登录了;  50014:Token 过期了;
+    //   if (res.code === 50008 || res.code === 50012 || res.code === 50014) {
+    //     // 请自行在引入 MessageBox
+    //     // import { Message, MessageBox } from 'element-ui'
+    //     MessageBox.confirm('你已被登出，可以取消继续留在该页面，或者重新登录', '确定登出', {
+    //       confirmButtonText: '重新登录',
+    //       cancelButtonText: '取消',
+    //       type: 'warning'
+    //     }).then(() => {
+    //       store.dispatch('user/resetToken').then(() => {
+    //         location.reload() // 为了重新实例化vue-router对象 避免bug
+    //       })
+    //     })
+    //   }
+    //   // return Promise.reject('error')
+    //   return res
+    // } else {
+    //   return res
+    // }
+  },
+  error => {
+    console.log('err' + error) // for debug
+    // Message({
+    //   message: error.message,
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
+    return Promise.reject(error)
+  }
+)
+
+export default service
+
 ~~~
 
 async和await正常使用要安装babel-preset-stage-3（目前vue-cli自带的是babel-preset-stage-2）
 封装后使用方法如下：
 ~~~
-//main.js
-import axios from './utils/ajax/axios.js'//封装地址
+//api.js
+import request from '@/utils/request'
+export function api(query) {
+	
+	console.log(query)
 
-Vue.prototype.$ajax = axios
 
-//使用
-fetchData: async function(){
-      let params = {
-      }
-      const res = await this.$ajax.post(url,params)
-      console.log(res);
-      
-    }
+  return request({
+    url: 'url/url',
+    method: 'post',
+    query,
+  })
+}
 ~~~
 
 vue-cli3的async和await所需要的babel已经自带，可直接使用
